@@ -13,6 +13,11 @@ jQuery.prototype.click = function(fn){
 	return this;
 }
 
+jQuery.prototype.keyUp = function(fn){
+	this.each(element => element.addEventListener('keyup', fn));
+	return this;
+}
+
 jQuery.prototype.hide = function(){
 	this.each(element => element.style.display = 'none');
 	return this;
@@ -30,6 +35,16 @@ jQuery.prototype.html = function(content=undefined){
 		return this.elements[0].innerHTML;
 	}
 
-	this.each(element => element.innerHTML=content);
+	this.each(element => element.innerHTML = content);
+	return this;
+}
+
+jQuery.prototype.val = function(content=undefined){
+	if (content===undefined){
+		if(this.elements[0]===undefined)
+			return undefined;
+		return this.elements[0].value;
+	}
+	this.each(element => element.value = content);
 	return this;
 }

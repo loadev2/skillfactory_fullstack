@@ -10,8 +10,8 @@ const init = () =>{
 init();
 
 const updateText = () =>{	
-  $('.minutes').html((0 + String(countMin)).slice(-2));
-  $('.seconds').html((0 + String(countSec)).slice(-2));
+  $('.minutes input').val((0 + String(countMin)).slice(-2));
+  $('.seconds input').val((0 + String(countSec)).slice(-2));
 }
 updateText();
 
@@ -78,4 +78,26 @@ $('.stop').click(() => {
     clearTimeout(timeinterval);
     $('.stop').hide();
     $('.start').show();
+});
+
+$('.minutes input').keyUp(()=>{
+    countMin=$('.minutes input').val();
+    if (countMin===undefined || countMin==''|| Number(countMin)<0)
+      countMin=0;
+    else if(Number(countMin)>59){
+      countMin=59
+    }
+    updateText();
+    
+});
+
+$('.seconds input').keyUp(()=>{
+    countSec=$('.seconds input').val();
+    if (countSec===undefined || countSec==''|| Number(countSec)<0)
+      countMin=0;
+    else if(Number(countSec)>59){
+      countSec=59
+    }
+    updateText();
+    
 });
