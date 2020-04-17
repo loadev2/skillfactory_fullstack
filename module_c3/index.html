@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>C3.9</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<style type="text/css">
+		section{
+			margin: 10px 30px;
+		}
+	</style>
+</head>
+<body>
+	<section>
+		<h1>Task 1</h1>
+		<div id="input-area" class="form-group">
+			<label for="city-input">Please, type your city</label>
+			<input type="text" id="city-input" class="form-control">
+		</div>
+		<div id="city-area" class="d-none">
+			
+		</div>
+		<button id="btnSaveCity" class="btn btn-primary" onclick="saveCity()">Save</button>
+		<button id="btnClearCity" class="btn btn-secondary d-none" onclick="clearCity()">Clear</button>
+	</section>
+	<hr>
+	<section>
+		<h1>Task 2</h1>
+		 <div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op1">
+   			<label class="form-check-label" for="op1">не звонить мне;</label>
+ 		</div>
+ 		<div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op2">
+   			<label class="form-check-label" for="op2">я прочитал и согласен с правилами пользования сервисом;</label>
+ 		</div>
+ 		<div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op3">
+   			<label class="form-check-label" for="op3">я не выбираю эту галочку;</label>
+ 		</div>
+ 		<div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op4">
+   			<label class="form-check-label" for="op4">я подтверждаю, что свобода в интернете — это возможность выбирать галочки;</label>
+ 		</div>
+ 		<div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op5">
+   			<label class="form-check-label" for="op5">мне больше 12 лет;</label>
+ 		</div>
+ 		<div class="form-check">
+    		<input type="checkbox" class="form-check-input" id="op6">
+   			<label class="form-check-label" for="op6">это задание выполнено правильно;</label>
+ 		</div>
+ 		<br>
+ 		<button id="btnSaveOptions" class="btn btn-primary d-none" onclick="saveOptions()">Save</button>
+	</section>
+	<script type="text/javascript">
+		const CITY_NAME="city";
+		const OPT_NAME="task2_options";
+		onLoad();
+
+		function onLoad(){
+			onLoadCity();
+			onLoadOptions();
+		}
+
+		/*** TASK 1 FUNCTIONS ***/
+		
+
+		function onLoadCity(){
+			let city=getCookie(CITY_NAME)
+			if (city){
+				let btnSave=document.querySelector("#btnSaveCity");
+				let btnClear=document.querySelector("#btnClearCity");
+				let inpArea=document.querySelector("#input-area");
+				let cityArea=document.querySelector("#city-area");
+				cityArea.innerHTML="Ваш город - "+ city;
+
+				inpArea.classList.add("d-none");
+				cityArea.classList.remove("d-none");
+				btnSave.classList.add("d-none");
+				btnClear.classList.remove("d-none");
+			}
+		}
+
+		function saveCity() {
+			let city_input=document.querySelector("#city-input");
+			let city=undefined;
+			if (city_input){
+				city=city_input.value;
+			}
+			try{
+				setCookie(CITY_NAME, city, {'max-age': 3600});
+			}
+			catch(err){
+				console.log(err)
+			}
+		}
+		function clearCity(){
+			deleteCookie(CITY_NAME)
+		}
+
+
+		/*** TASK 2 FUNCTIONS ***/
+		function onLoadOptions(){
+			let cookie_str=getCookie(OPT_NAME);
+			if (!cookie_str){
+				//show save button because there are no options in cookie
+				document.querySelector("#btnSaveOptions").classList.remove("d-none");
+				return;
+			} 
+
+			let cookie_arr=cookie_str.split("_");
+			//mark previously checked  checkboxes
+			for (let i in cookie_arr){
+				document.querySelector("#"+cookie_arr[i]).checked=true;
+			}
+
+			//disable all checkboxes
+			for (let i=1; i<7; i++){
+				document.querySelector("#op"+i).disabled=true;
+			}
+
+			
+			
+		}
+
+		function saveOptions(){
+			let opt_arr=[];
+			for (let i=1; i<7; i++){
+				let opt=document.querySelector("#op"+i);
+				if (opt.checked){
+					opt_arr.push("op"+i);
+				}
+			}
+			
+			setCookie(OPT_NAME, opt_arr.join("_"), {'max-age': 3600})
+		}
+
+
+
+		/*** COOKIE'S FUNCTIONS ***/
+		function setCookie(name, value, options = {}) {
+
+		  options = {
+		    path: '/',
+		    // при необходимости добавьте другие значения по умолчанию
+		    ...options
+		  };
+
+		  if (options.expires  instanceof Date) {
+		    options.expires = options.expires.toUTCString();
+		  }
+
+		  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+		  for (let optionKey in options) {
+		    updatedCookie += "; " + optionKey;
+		    let optionValue = options[optionKey];
+		    if (optionValue !== true) {
+		      updatedCookie += "=" + optionValue;
+		    }
+		  }
+		  document.cookie = updatedCookie;
+		}
+
+		function getCookie(name) {
+		  let matches = document.cookie.match(new RegExp(
+		    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+		  ));
+		  return matches ? decodeURIComponent(matches[1]) : undefined;
+		}
+
+		function deleteCookie(name) {
+		  setCookie(name, "", {
+		    'max-age': -1
+		  })
+		}
+	</script>
+</body>
+</html>
